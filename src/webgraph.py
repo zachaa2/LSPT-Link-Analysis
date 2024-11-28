@@ -139,6 +139,30 @@ class WebGraph:
         
         await self._save_graph() # async write to file
 
+    async def calculate_pagerank(self):
+        """
+        Calculate and store the pagerank scores of the graph asynchronously.
+        """
+        async with self.graph_lock:
+            self.pagerank = nx.pagerank(self.graph)
+        
+    def get_pagerank(self, node=None):
+        """
+        Retrieves the page rank score for a given node. If none is provided, returns the whole mapping. 
+        If the node isn't in the graph, or the mapping doesn't exist, raises a KeyError. 
+        
+        Parameters:
+            node (str, optional): The node whose PageRank score to retrieve.
+        
+        Returns:
+            pagerank (float or dict): the PageRank score for the specific node, or the whole mapping if none provided. 
+        """
+        if node:
+            if self.pagerank and node in self.pagerank:
+                return self.pagerank[node]
+            else:
+                raise KeyError(f"PageRank for node '{node}' is not available")
+        return self.pagerank
 
 
 # usage example
