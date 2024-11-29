@@ -3,6 +3,7 @@ import os
 import pickle as pkl
 import asyncio
 import aiofiles
+from networkx.readwrite import json_graph
 
 class WebGraph:
     def __init__(self, graph_file="webgraph.pkl"):
@@ -163,6 +164,26 @@ class WebGraph:
             else:
                 raise KeyError(f"PageRank for node '{node}' is not available")
         return self.pagerank
+    
+    async def get_subgraph(self, node, k):
+        """
+        Retrieve the induced subgraph of the k-hop neighborhood centered around a given node.
+
+        Parameters:
+            node (str): The node at the center of the k-hop subgraph.
+            k (int): The radius of the neighborhood (number of hops).
+        Returns:
+            networkx.DiGraph: The k-hop induced subgraph.
+        """
+        async with self.graph_lock:
+            if node not in self.graph:
+                raise KeyError(f"Node '{node}' not found in the graph.")
+            
+            # generate subgraph as an edge list
+            subgraph = nx.ego_graph(self.graph, node, radius=k, undirected=False)
+            edge_list = list(subgraph.edges(data=True))
+            return edge_list
+            # return json_graph.node_link_data(k_hop_subgraph)  # convert to JSON-like structure
 
 
 # usage example
