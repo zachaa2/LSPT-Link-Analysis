@@ -1,3 +1,4 @@
+-e .
 networkx
 fastapi[standard]
 aiofiles
