@@ -50,6 +50,10 @@ async def add_node(request: NodeRequest):
     await graph.add_node(request.node, **(request.metadata or {}))
     return {"message": f"Node '{request.node}' added successfully."}
 
+@app.post("/evaluation/update_metadata")
+async def  update_node_metadata(request: NodeRequest):
+    await graph.update_node_metadata(request.node, **(request.metadata or {}))
+    return {"message": f"Node '{request.node}' updated successfully."}
 
 @app.post("/add_edge")
 async def add_edge(request: EdgeRequest):
@@ -96,7 +100,7 @@ async def get_pagerank(node: str):
         raise HTTPException(status_code=404, detail=str(e))
 
 
-@app.post("/get_subgraph")
+@app.post("/uiux/graph")
 async def get_subgraph(request: SubgraphRequest):
     try:
         subgraph = await graph.get_subgraph(request.node, request.k)
