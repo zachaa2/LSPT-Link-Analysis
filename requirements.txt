@@ -2,3 +2,6 @@
 networkx
 fastapi[standard]
 aiofiles
+numpy
+scipy
+pydantic

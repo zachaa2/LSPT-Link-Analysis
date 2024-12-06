@@ -1,0 +1,6 @@
+README.md
+setup.py
+src/webgraph.egg-info/PKG-INFO
+src/webgraph.egg-info/SOURCES.txt
+src/webgraph.egg-info/dependency_links.txt
+src/webgraph.egg-info/top_level.txt
