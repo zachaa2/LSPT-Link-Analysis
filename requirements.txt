@@ -2,3 +2,7 @@
 networkx
 fastapi[standard]
 aiofiles
+numpy
+scipy
+pydantic
+typing-inspect
