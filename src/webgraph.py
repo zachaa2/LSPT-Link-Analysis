@@ -14,6 +14,7 @@ class WebGraph:
         self.graph_lock = asyncio.Lock() # control in memory graph access
         self.file_lock = asyncio.Lock() # control graph io access
         self.graph = self._load_graph()
+        self.pagerank = None
 
     def _load_graph(self):
         """
