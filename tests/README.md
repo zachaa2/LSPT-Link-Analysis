@@ -1,55 +1,82 @@
-**1. Writing Test Code (test_webgraph.py)**  
-- **Organizing the Test Class:**  
-  We place all our test methods in a subclass of `unittest.TestCase`. Each test function’s name typically starts with `test_`, which allows the `unittest` discovery mechanism to find and run it automatically.
-
-- **Focusing on Core Methods:**  
-  Our tests target each public function in `webgraph.py`. For instance:
-  - `test_add_node()` ensures that adding a node with specific metadata actually stores the node and data correctly in the graph.
-  - `test_add_edge()` checks that edges are properly formed between existing nodes.
-  - `test_remove_node()` and `test_remove_edge()` verify that nodes and edges are indeed removed, and that no dangling links remain.
-  - `test_update_node_metadata()` ensures that metadata updates are reflected in the graph.
-  - `test_calculate_pagerank()` and related tests verify that PageRank computations run correctly and that results are retrievable.
-  - `test_get_subgraph()` checks that we can extract a subgraph of neighbors from a given node within a certain hop distance.
-
-- **Testing Edge Cases and Exceptions:**  
-  We don’t stop at the main logic paths; we also test how the code handles unusual or error conditions. This might include:
-  - Attempting to retrieve metadata for a node that doesn’t exist and ensuring the code raises an expected `KeyError`.
-  - Calling `get_pagerank()` before we’ve actually calculated PageRank, expecting the code to either return an error or handle that gracefully.
-  - Removing a non-existent node or edge, ensuring the operation completes without unexpected crashes.
-
-**2. Adjusting the Implementation (webgraph.py) to Improve Coverage**  
-Once we run the tests and generate a coverage report, we might see certain lines of code that are not being tested—indicated as “missing.” For example, some lines might handle very specific error cases or initialization conditions that none of our tests have triggered yet. By analyzing the missing lines, we can add or modify test cases that specifically target those conditions. If the tests reveal that our code does not handle these scenarios gracefully, we can then refine the implementation in `webgraph.py`:
-
-- **Initializing Attributes:**  
-  If coverage data shows we’re missing lines in the constructor or initialization code, we may set default values so that there’s always a known state for the test to verify. This ensures that if a test calls `get_pagerank()` before `calculate_pagerank()`, the code won’t fail with an `AttributeError`. Instead, we might raise a `KeyError` or provide a meaningful message.
-
-- **Handling Exceptions and Return Values:**  
-  If some branches are never covered—perhaps an `if` condition is never true because we never provided inputs triggering it—we can add tests that force those inputs or adjust `webgraph.py` to consistently handle all code paths. For example, if we have a branch that checks whether a node exists before returning data, we add a test that tries to retrieve data from a non-existent node.
-
-**3. **
-
-**3. Interpreting the Coverage Report**  
-The `coverage report` command gives us useful metrics:
-
-- **Stmts (Statements)**:  
-  The total number of executable lines in the file.
-
-- **Miss (Missing)**:  
-  How many lines of code were not executed by any test. We want to reduce this number to ensure that every line of code is tested at least once.
-
-- **Cover (Coverage Percentage)**:  
-  The percentage of statements executed by tests. A higher coverage percentage means we’re testing more of our code. While aiming for 100% coverage is a good goal, it’s more important to ensure we have meaningful tests rather than just hitting every line arbitrarily.
-
-- **Missing**:  
-  This lists the exact line numbers where coverage is missing. These are our clues to write new tests or modify existing ones to cover previously untested scenarios.
-
-**5. Iterative Improvement**  
-After adding or modifying tests, we re-run coverage. If we still see missing lines, we repeat the process: inspect the code paths that remain uncovered, add or refine tests, and continue until we’re satisfied with the level of coverage and the thoroughness of our tests.
+**Overview**  
+ We use `unittest` to write test methods in `test_webgraph.py` and measure how much of our code is covered by these tests using the `coverage` tool.
 
 ---
 
-**In summary**:  
-- We wrote comprehensive tests in `test_webgraph.py` to cover both normal and exceptional use cases of `webgraph.py`.
-- We examined coverage reports to identify which lines and branches were not tested.
-- We modified `webgraph.py` to handle uninitialized attributes, provide meaningful exceptions, and ensure consistent behavior across different scenarios.
-- We added more tests for missing code paths, including scenarios that trigger exceptions or special conditions, improving our coverage percentage and the overall reliability of our code.
+**1. Writing and Organizing Tests (test_webgraph.py)**  
+We create a test class that inherits from `unittest.TestCase`, and each test method name starts with `test_`. This naming convention allows the `unittest` discovery mechanism to automatically find and run these tests. Our tests typically target the public functions of `webgraph.py`:
+
+- **Core Methods:**  
+  - `test_add_node()`: Ensures adding a node with metadata stores it correctly.  
+  - `test_add_edge()`: Checks if adding edges between existing nodes works properly.  
+  - `test_remove_node()` and `test_remove_edge()`: Verifies removal of nodes and edges, ensuring no orphan references remain.  
+  - `test_update_node_metadata()`: Confirms that updating a node’s metadata works as expected.  
+  - `test_calculate_pagerank()` and related tests: Ensures that PageRank calculations run correctly and results can be retrieved.  
+  - `test_get_subgraph()`: Checks that we can retrieve a neighborhood subgraph for a given node.
+
+- **Edge Cases and Exceptions:**  
+  We also test how the code handles unusual or erroneous conditions:  
+  - Trying to get metadata for a non-existent node should raise `KeyError`.  
+  - Calling `get_pagerank()` before running the calculation should produce a meaningful error or exception.  
+  - Removing non-existent nodes or edges should be handled gracefully without causing crashes.
+
+This broad approach ensures we test the main functionality as well as how the code responds to invalid input or unexpected states.
+
+---
+
+**2. Improving Coverage by Adjusting the Code (webgraph.py)**  
+After running our tests, we use coverage reports to find lines of code not executed by any test (labeled “missing”). These missing lines often correspond to rarely triggered conditions or error-handling paths. For instance:
+
+- **Initializing Attributes:**  
+  If tests show that calling `get_pagerank()` before `calculate_pagerank()` causes an unhandled error, we might initialize `self.pagerank = None` in the constructor. This way, the code can detect the uninitialized state and raise a `KeyError` or return a helpful message.
+
+- **Handling Exceptions and Uncovered Branches:**  
+  If an `if` condition or exception branch never gets triggered, we can add a test specifically designed to hit that scenario—for example, a test that requests a non-existent node to ensure that the proper exception is raised. If the code itself needs refinement to handle such cases consistently, we modify `webgraph.py` accordingly.
+
+By iterating this process—adding tests, refining code to handle edge cases, and checking coverage again—we gradually ensure that all meaningful code paths are tested.
+
+---
+
+**3. Running Tests with Coverage**  
+To run our tests and collect coverage data, we navigate to the directory containing our tests and run:
+
+```bash
+coverage run -m unittest discover
+```
+
+- `coverage run`: Activates the coverage tool to track which lines of code are executed.  
+- `-m unittest discover`: Automatically finds and runs all tests in files named `test_*.py`.
+
+This step executes our entire test suite and records coverage data.
+
+---
+
+**4. Viewing Coverage Reports**  
+To see a summary of coverage results in the terminal, we run:
+
+```bash
+coverage report -m
+```
+
+This shows:
+
+- **Stmts (Statements)**: Total lines of code that can execute.  
+- **Miss (Missing)**: Lines never executed by any test.  
+- **Cover (Coverage Percentage)**: The percentage of executed lines.  
+- **Missing**: The exact line numbers untested.
+
+By analyzing these numbers, we know where to improve our tests. If certain lines remain untested, we create additional tests or adjust existing ones until those scenarios are covered.
+
+---
+
+**6. Iterative Improvement**  
+After examining the coverage report, we may still find some lines uncovered. We then write or modify tests to cover those lines, run `coverage` again, and repeat until we’re satisfied with the testing completeness. The goal is not just hitting 90%-100% coverage, but ensuring our tests are meaningful, accurately reflecting the behavior of our code under both normal and exceptional conditions.
+
+---
+
+**In Summary**:  
+1. We write comprehensive tests in `test_webgraph.py` to cover normal operations and edge cases of `webgraph.py`.  
+2. We use `coverage` to identify missing lines.  
+3. We refine `webgraph.py` and add new tests to handle those missing scenarios.  
+4. We run `coverage report` to guide further test improvements.  
+5. Through iteration, we improve both coverage and code quality, ensuring the `WebGraph` functionality is robust, reliable, and well-tested.
