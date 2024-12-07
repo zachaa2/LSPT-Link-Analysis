@@ -80,3 +80,10 @@ After examining the coverage report, we may still find some lines uncovered. We 
 3. We refine `webgraph.py` and add new tests to handle those missing scenarios.  
 4. We run `coverage report` to guide further test improvements.  
 5. Through iteration, we improve both coverage and code quality, ensuring the `WebGraph` functionality is robust, reliable, and well-tested.
+
+Name               Stmts   Miss  Cover   Missing
+------------------------------------------------
+test_webgraph.py      88      3    97%   11, 79, 110
+webgraph.py           94     18    81%   24-25, 164, 192-210, 213
+------------------------------------------------
+TOTAL                182     21    88%
