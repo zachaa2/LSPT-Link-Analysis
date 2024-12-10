@@ -4,9 +4,15 @@ from webgraph import WebGraph
 from pydantic import BaseModel
 import asyncio
 from typing import List, Optional
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--graph_name", type=str, required=True, help="name of the graph file. E.g., if name is \"graph\", then the file will be \"graph.pkl\"")
+args = parser.parse_args()
+
 
 app = FastAPI()
-graph = WebGraph()
+graph = WebGraph(graph_file=f"{args.graph_name}.pkl")
 
 '''
     The following are the structures of the Request that gets recieved to this
